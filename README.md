@@ -13,20 +13,18 @@ This repository serves as a dumping ground for miscellaneous nix scripts. The sc
 
 ### MOTD Info
 
-A simple script to enable basic system info to be displayed on login. Run the following to grab the script from this repository and enable it.
+A simple script to enable basic system info to be displayed on login. Run the following to make sure you have the dependencies, update `sshd_config`, grab the script from this repository and enable it.
 
-	# Install the required dependencies
-	sudo yum install -q -y util-linux
+```bash
+sudo yum install util-linux -y
+sudo sed -i "s/^\(PrintMotd\s* \s*\).*\$/\1no/" "/etc/ssh/sshd_config"
+sudo systemctl restart sshd
+sudo wget -O /etc/profile.d/login-info.sh https://raw.githubusercontent.com/stom66/code-golf/master/bash/motd-generator-simple-info.sh
+sudo chmod +x /etc/profile.d/login-info.sh
+```
 
-    # Update sshd_config to disable MOTD
-    sudo sed -i "s/^\(PrintMotd\s* \s*\).*\$/\1no/" "/etc/sshd/sshd_config"
+Optionally you can make your own changes to the information displayed by editing `/etc/profile.d/login-info.sh`.
 
-    # Restart ssh
-    sudo systemctl restart sshd
 
-    # Get the script that echos system info
-    sudo wget -O /etc/profile.d/login-info.sh https://foo.com/ 
 
-    # Make it executable
-    sudo chmod +x /etc/profile.d/login-info.sh
     
