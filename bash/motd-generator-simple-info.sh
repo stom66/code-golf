@@ -9,7 +9,6 @@ MEM_TOTAL=`cat /proc/meminfo | grep MemTotal | awk {'print $2'}`
 let MEM_FREE=MEM_FREE/1024
 let MEM_TOTAL=MEM_TOTAL/1024
 let MEM_USED=MEM_TOTAL-MEM_FREE
-let MEM_USED_P=(100/MEM_TOTAL)*MEM_USED
 read one five fifteen rest < /proc/loadavg
 
 # get network info
@@ -26,15 +25,17 @@ days=$((${upSeconds}/86400))
 
 UPTIME=`printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs"`
 
-echo "     
-$(tput setaf 7)      ,:;;:,    @    $(tput setaf 244)|$(tput setaf 2)   `date +"%A, %e %B %Y, %r"`
-$(tput setaf 7)     /,;/ \;\,,//    $(tput setaf 244)|$(tput setaf 2)   `uname -srmo`
-$(tput setaf 7)    |,,\    ''''     $(tput setaf 244)|$(tput setaf 6)   Hostname:    ${HOSTNAME}
-$(tput setaf 7)    \,,,,,,/\,/\     $(tput setaf 244)|$(tput setaf 6)   IPs:         ${IP_EXT} (external)
-$(tput setaf 7)   ,,,,,,,,,,,,,|    $(tput setaf 244)|$(tput setaf 6)                ${IP_INT} (internal)
-$(tput setaf 7)  /,,,,*,,,,,,,,,\   $(tput setaf 244)|$(tput setaf 6)   Uptime:      ${UPTIME} 
-$(tput setaf 7)  |,,,,,,,,,,,,,@    $(tput setaf 244)|$(tput setaf 6)   CPU:         ${CPUNAME}
-$(tput setaf 7)   \,,,,,,,,,@/      $(tput setaf 244)|$(tput setaf 6)   Memory:      ${MEM_USED_P} ${MEM_USED}/${MEM_TOTAL}MB
-$(tput setaf 7)    |,,||,,|         $(tput setaf 244)|$(tput setaf 6)   Processes:   `ps ax | wc -l | tr -d " "`                     
-$(tput setaf 7)    |,,||,,\         $(tput setaf 244)|$(tput setaf 6)   Load:        ${one}, ${five}, ${fifteen} (1, 5, 15 min)                     
+echo "
+$(tput setaf 7)   ++==========================++ 
+$(tput setaf 7)   ||                          || $(tput setaf 2)   `date +"%A, %e %B %Y, %r"`
+$(tput setaf 7)   ||                          || $(tput setaf 2)   `uname -srmo`
+$(tput setaf 7)   ||                          || $(tput setaf 6)   Hostname:    ${HOSTNAME}
+$(tput setaf 7)   ||                          || $(tput setaf 6)   IPs:         ${IP_EXT} (external)
+$(tput setaf 7)   ||                          || $(tput setaf 6)                ${IP_INT} (internal)
+$(tput setaf 7)   ||                          || $(tput setaf 6)   Uptime:      ${UPTIME}
+$(tput setaf 7)   ||                          || $(tput setaf 6)   CPU:         ${CPUNAME}
+$(tput setaf 7)   ||                          || $(tput setaf 6)   Memory:      ${MEM_USED}MB of ${MEM_TOTAL}MB
+$(tput setaf 7)   ||                          || $(tput setaf 6)   Processes:   `ps ax | wc -l | tr -d " "` 
+$(tput setaf 7)   ||                          || $(tput setaf 6)   Load:        ${one}, ${five}, ${fifteen} (1, 5, 15 min)
+$(tput setaf 7)   ++==========================++
 $(tput sgr0)"
