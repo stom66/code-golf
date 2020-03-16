@@ -26,5 +26,14 @@ sudo chmod +x /etc/profile.d/sysinfo.motd.sh
 Optionally you can make your own changes to the information displayed by editing `/etc/profile.d/sysinfo.motd.sh`.
 
 
+### Lightsail Setup
 
-    
+This script is designed to be run on a fresh installation of CentOS 7 running on the AWS Lightsail platform.
+
+It will install all required dependencies for a typical webdev server, including Virtualmin, a LAMP stack, nodejs, and various utilities.
+
+Fetch and customise it with the following:
+
+    wget https://raw.githubusercontent.com/stom66/code-golf/master/centos/lightsail-full-setup.sh
+    chmod +x lightsail-full-setup.sh
+    nano lightsail-full-setup.sh
