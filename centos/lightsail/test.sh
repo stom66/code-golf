@@ -77,7 +77,7 @@ echo "   Using FQDN:      $DOMAIN" >> ./calvin.log
 echo "   Using pubkey:    $PUBKEY" >> ./calvin.log
 
 # Add pubkey
-if [! -z "$PUBKEY" ]; then
+if [ ! -z "$PUBKEY" ]; then
 ./05-add-public-key.sh -k "${PUBKEY}"
 echo "Added pubkey to authorized_keys: ${PUBKEY}" >> ./calvin.log
 fi
