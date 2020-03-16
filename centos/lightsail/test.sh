@@ -84,8 +84,8 @@ echo "Added pubkey to authorized_keys: ${PUBKEY}" >> ./calvin.log
 fi
 
 # Trigger yum updates and dependecy installs
-sudo sh 10-hostname-setup.sh "${HOSTNAME}"
-echo "Configured system to use hostname: ${HOSTNAME}" >> ./calvin.log
+sudo sh 10-hostname-setup.sh "${DOMAIN}"
+echo "Configured system to use hostname: ${DOMAIN}" >> ./calvin.log
 
 # Trigger yum updates and dependecy installs
 sudo sh 20-yum-update-and-install-dependencies.sh
