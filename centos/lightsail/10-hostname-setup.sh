@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Apply Network and hostname settings
 # Expects $1 to be an fqdn
 

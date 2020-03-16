@@ -1,12 +1,6 @@
+#!/bin/bash
 
-#!/bin/sh
-
-print_vars() {
-	printf "|| FQDN:          ${DOMAIN} \n"
-	printf "|| Public key:    ${PUBKEY} \n"
-	printf "|| \n"
-}
-
+# Parse provided parameters
 while [ $# -gt 0 ]; do
 	key="$1"
 	case $key in
@@ -19,7 +13,9 @@ while [ $# -gt 0 ]; do
 			echo "	* Virtualmin - apache, mysql, postfix, dovecot, etc"
 			echo "	* NodeJS 12.x "
 			echo "	* PHP 7.2 (via Virtualmin) and 7.4 (via Remi) "
-			echo "	* PHP 7.2 (via Virtualmin) and 7.4 (via Remi) "
+			echo "	* Install a supplied public key "
+			echo "	* Add a custom MotD with system overview "
+			echo "	* Tweak various config options "
 
 			echo "options:"
 			echo "-h, --help                show brief help"
@@ -47,29 +43,34 @@ done
 printf "|| Starting CALVIn. Checking config \n"
 printf "|| ================================ \n"
 
-# check we have a domain to use for configuration
+# Check we have a domain to use for configuration, prompt if not
 if [ -z "$DOMAIN" ]; then
 	printf "Enter a valid FQDN (example.com):"
 	read -r DOMAIN
 fi
+
+# Quit out if the user failed to provide a FQDN
 if [ -z "$DOMAIN" ]; then
 	printf "You must specify a FQDN. Script is exiting.\n\n"
 	exit 0
 fi
 
-
-#check if we're using a pubkey
+# Check if we're using a pubkey, or request one
 if [ -z "$PUBKEY" ]; then
 	printf "Enter an optional public key to install (skip):"
 	read -r PUBKEY
 fi
 
+# Print the vars we're using
+print_vars() {
+	printf "|| FQDN:          ${DOMAIN} \n"
+	printf "|| Public key:    ${PUBKEY} \n"
+	printf "|| \n"
+}
 printf "$(print_vars)"
 
 
-##
-## Start install
-##
+# Start install log
 touch ./calvin.log
 TIME_START=$(date +"%T")
 echo "Install started at: $TIME_START" >> ./calvin.log
@@ -77,35 +78,35 @@ echo "   Using FQDN:      $DOMAIN" >> ./calvin.log
 echo "   Using pubkey:    $PUBKEY" >> ./calvin.log
 
 # Add pubkey
-if [ ! -z "$PUBKEY" ]; then
-./05-add-public-key.sh -k "${PUBKEY}"
+if [ -z "$PUBKEY" ]; then
+sudo sh 05-add-public-key.sh -k "${PUBKEY}"
 echo "Added pubkey to authorized_keys: ${PUBKEY}" >> ./calvin.log
 fi
 
 # Trigger yum updates and dependecy installs
-./10-hostname-setup.sh "${HOSTNAME}"
+sudo sh 10-hostname-setup.sh "${HOSTNAME}"
 echo "Configured system to use hostname: ${HOSTNAME}" >> ./calvin.log
 
 # Trigger yum updates and dependecy installs
-./20-yum-update-and-install-dependencies.sh
+sudo sh 20-yum-update-and-install-dependencies.sh
 echo "Yum installed and updated" >> ./calvin.log
 
 
 
 # Add SysInfo MOTD
-./40-add-motd-system-info.sh
+sudo sh 40-add-motd-system-info.sh
 echo "Added sysinfo motd" >> ./calvin.log
 
 
 # setup remi php 7.4
-./50-php-add-remi.sh
+sudo sh 50-php-add-remi.sh
 echo "Installed Remi PHP 7.4:" >> ./calvin.log
 php -v >> ./calvin.log
 
 #setup node 12.x
-./55-node-js-12.sh
+sudo sh 55-node-js-12.sh
 echo "Installed NodeJS 12.x:" >> ./calvin.log
 node -v >> calvin.log
 
 # fetch virtualmin
-./66-virtualmin-installer.sh "${DOMAIN}"
+sudo sh 66-virtualmin-installer.sh "${DOMAIN}"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # runs yum update and installs various dependencies
 
 PACKAGES=""

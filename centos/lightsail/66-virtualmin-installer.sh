@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #fetches and triggers the latest version of the virtualmin installer
 #expects $1 to be a valid FQDN
 

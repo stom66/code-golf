@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # add public key to authorized_keys
 # expects $1 to be a valid public key
 
