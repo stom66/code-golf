@@ -73,12 +73,6 @@ if [ -z "$PASSWORD" ]; then
 	read -e -p "a password for the Virtualmin admin panel: " -i "${PASSWORD}" PASSWORD
 fi
 
-# Quit out if the user failed to provide a FQDN
-if [ -z "$PASSWORD" ]; then
-	printf "You must specify a FQDN. Script is exiting.\n\n"
-	exit 0
-fi
-
 
 # Print the vars we're using
 print_vars() {
