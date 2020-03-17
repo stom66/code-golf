@@ -33,6 +33,11 @@ while [ $# -gt 0 ]; do
 			shift
 			shift
 			;;
+		-p|--password)
+			PUBKEY="$2"
+			shift
+			shift
+			;;
 		*)
 			break
 			;;
@@ -46,6 +51,7 @@ printf "|| ================================ \n"
 # Check we have a domain to use for configuration, prompt if not
 if [ -z "$DOMAIN" ]; then
 	printf "Enter a valid FQDN (example.com):"
+	read -e -p "Enter Your Name:" -i "Ricardo" NAME
 	read -r DOMAIN
 fi
 
@@ -60,6 +66,19 @@ if [ -z "$PUBKEY" ]; then
 	printf "Enter an optional public key to install (skip):"
 	read -r PUBKEY
 fi
+
+# Check we have a password to use for the Virtualmin admin
+if [ -z "$PASSWORD" ]; then
+	PASSWORD = date +%s | sha256sum | base64 | head -c 32
+	read -e -p "a password for the Virtualmin admin panel: " -i "${PASSWORD}" PASSWORD
+fi
+
+# Quit out if the user failed to provide a FQDN
+if [ -z "$PASSWORD" ]; then
+	printf "You must specify a FQDN. Script is exiting.\n\n"
+	exit 0
+fi
+
 
 # Print the vars we're using
 print_vars() {
@@ -79,11 +98,13 @@ echo "   Using pubkey:    $PUBKEY" >> ./calvin.log
 
 # Add pubkey
 if [ -z "$PUBKEY" ]; then
-sudo sh 05-add-public-key.sh -k "${PUBKEY}"
-echo "Added pubkey to authorized_keys: ${PUBKEY}" >> ./calvin.log
+	echo "Skipping pubkey (none provided)" >> ./calvin.log
+else
+	sudo sh 05-add-public-key.sh -k "${PUBKEY}"
+	echo "Added pubkey to authorized_keys: ${PUBKEY}" >> ./calvin.log
 fi
 
-# Trigger yum updates and dependecy installs
+# Configure hostname and network
 sudo sh 10-hostname-setup.sh "${DOMAIN}"
 echo "Configured system to use hostname: ${DOMAIN}" >> ./calvin.log
 
@@ -91,22 +112,19 @@ echo "Configured system to use hostname: ${DOMAIN}" >> ./calvin.log
 sudo sh 20-yum-update-and-install-dependencies.sh
 echo "Yum installed and updated" >> ./calvin.log
 
-
-
 # Add SysInfo MOTD
 sudo sh 40-add-motd-system-info.sh
 echo "Added sysinfo motd" >> ./calvin.log
 
-
-# setup remi php 7.4
+# Add Remi PHP 7.4
 sudo sh 50-php-add-remi.sh
 echo "Installed Remi PHP 7.4:" >> ./calvin.log
 php -v >> ./calvin.log
 
-#setup node 12.x
+# Add Node 12.x
 sudo sh 55-node-js-12.sh
 echo "Installed NodeJS 12.x:" >> ./calvin.log
 node -v >> calvin.log
 
-# fetch virtualmin
+# Add virtualmin
 sudo sh 66-virtualmin-installer.sh "${DOMAIN}"
